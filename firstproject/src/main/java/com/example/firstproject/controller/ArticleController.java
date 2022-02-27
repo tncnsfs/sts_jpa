@@ -6,8 +6,12 @@ import com.example.firstproject.repository.ArticleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -60,6 +64,22 @@ public class ArticleController {
         log.debug("REPOSITORY debug : " +saved.toString());
 
         return "";
+    }
+
+    // 1. detail 페이지 만들기 ,
+    @GetMapping("/articles/{id}")
+    public String show(@PathVariable Long id, Model model){
+        log.info("id : {} " , id);
+
+        // 1, id로 데이터를 가져옴
+        //    Optional<Article> articleEntity = articleRepository.findById(id);  // java 8 버전
+        Article articleEntity = articleRepository.findById(id).orElse(null);
+
+        // 2, 가져온 데이터를 모델에 등록
+        model.addAttribute("article", articleEntity);
+
+        // 3, 보여줄 페이지를 설정!
+        return "articles/show";
     }
 
 }
