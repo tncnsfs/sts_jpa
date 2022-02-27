@@ -1,0 +1,18 @@
+{{>layouts/header}}
+
+<!-- action : 컨트롤 어디에 던지질 결정
+     method : 어떤 방식으로 던질지 결정
+-->
+<form class="container" action="/articles/create" method="post" accept-charset="UTF-8">
+    <div class="mb-3">
+        <label class="form-label">제목</label>
+        <input class="form-control" name="title"   type="text" >
+    </div>
+    <div class="mb-3">
+        <label class="form-label">내용</label>
+        <textarea class="form-control"  name="content" rows="3"></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+
+{{>layouts/footer}}
