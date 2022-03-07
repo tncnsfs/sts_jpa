@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -63,7 +64,7 @@ public class ArticleController {
         log.info("REPOSITORY : " +saved.toString());
         log.debug("REPOSITORY debug : " +saved.toString());
 
-        return "";
+        return "redirect:/articles/" + saved.getId(); // 상세페이지
     }
 
     // 1. detail 페이지 만들기 ,
@@ -75,11 +76,58 @@ public class ArticleController {
         //    Optional<Article> articleEntity = articleRepository.findById(id);  // java 8 버전
         Article articleEntity = articleRepository.findById(id).orElse(null);
 
-        // 2, 가져온 데이터를 모델에 등록
+        // 2, 가져온 데이터를 모델에 등록, 이러면 화면에 article 사용될수 있다 .
         model.addAttribute("article", articleEntity);
 
         // 3, 보여줄 페이지를 설정!
         return "articles/show";
     }
+
+
+    @GetMapping("/articles")
+    public String index(Model model){
+        // 1: 모든 article을 가져온다
+        List<Article> articleEntityList = articleRepository.findAll();
+
+        // 2: 가져온 Article 묶음을 뷰로 전달 !
+        model.addAttribute("articleList", articleEntityList);
+
+        // 3: 뷰 페이지를 설정!
+        return "articles/index";
+    }
+
+    @GetMapping("/articles/{id}/edit")
+    public String edit(@PathVariable Long id, Model model){
+        // 수정할 데이터 가져오기
+        Article articleEntity = articleRepository.findById(id).orElse(null);
+
+        // Model 에 데이터를 등록
+        model.addAttribute("article", articleEntity);
+
+        // 뷰 페이지설정 !
+        return "articles/edit";
+    }
+
+    @PostMapping("/articles/update")
+    public String update(ArticleForm form){
+        log.info(form.toString());
+
+        //1 , DTO -> ENTITY
+        Article articleEntity = form.toEntity();
+
+        //2, ENTITY IS SAVE
+        Article target = articleRepository.findById(articleEntity.getId()).orElse(null);
+        log.info("target : {}", target);
+
+
+        if (target != null){
+            articleRepository.save(articleEntity);
+        }
+
+        //3, SAVEDATA -> UPDATE REDIRECT VIEW
+        return "redirect:/articles/" + articleEntity.getId();
+    }
+
+
 
 }
