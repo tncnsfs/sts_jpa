@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -96,6 +95,7 @@ public class ArticleController {
         return "articles/index";
     }
 
+
     @GetMapping("/articles/{id}/edit")
     public String edit(@PathVariable Long id, Model model){
         // 수정할 데이터 가져오기
@@ -114,17 +114,19 @@ public class ArticleController {
 
         //1 , DTO -> ENTITY
         Article articleEntity = form.toEntity();
-
+//
         //2, ENTITY IS SAVE
         Article target = articleRepository.findById(articleEntity.getId()).orElse(null);
-        log.info("target : {}", target);
+        log.info("target        , DB 에서 원본데이터 가져오기   : {} " , target);
+        log.info("articleEntity , DB 에   수정할 데이터 넣기 전 : {} " , articleEntity);
 
 
         if (target != null){
-            articleRepository.save(articleEntity);
+//        3, SAVEDATA -> UPDATE REDIRECT VIEW
+             articleRepository.save(articleEntity);
         }
 
-        //3, SAVEDATA -> UPDATE REDIRECT VIEW
+//        4, 상세페이지로 이동한다 .
         return "redirect:/articles/" + articleEntity.getId();
     }
 
